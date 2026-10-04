@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#C4DACF">
+<title>Kalender &amp; To-dos</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="app">
+  <main id="screen"></main>
+  <nav id="nav" aria-label="Hauptnavigation"></nav>
+</div>
+<div id="sheet" hidden></div>
+<div id="toast" role="status" hidden></div>
+<script src="vendor/capacitor.js"></script>
+<script src="vendor/ical.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/caldav.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
