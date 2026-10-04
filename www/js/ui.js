@@ -56,6 +56,11 @@
     );
   }
   function addForm(scope) {
+    if (!App.defaultCal('todo'))
+      return (
+        '<div class="nolist"><p>In deiner Nextcloud gibt es noch keine Aufgabenliste.</p>' +
+        '<button type="button" class="primary" data-act="make-list">Aufgabenliste anlegen</button></div>'
+      );
     return (
       '<form class="add" data-form="add-task" data-scope="' + scope + '"><label>' + svg(IC.plus, 22, 2.2) +
       '<input type="text" name="title" data-keep="add-' + scope + '" placeholder="Aufgabe hinzufügen" aria-label="Neue Aufgabe" autocomplete="off" enterkeyhint="done"></label>' +
@@ -431,6 +436,15 @@
     },
     'tog-ev': (b) => { const h = S().settings.hiddenEv; h[b.dataset.url] = !h[b.dataset.url]; App.rebuildModels(); App.save(); },
     'tog-todo': (b) => { const h = S().settings.hiddenTodo; h[b.dataset.url] = !h[b.dataset.url]; App.save(); },
+    'make-list': async (b) => {
+      b.disabled = true;
+      try {
+        await App.createTaskList();
+        App.toast('Aufgabenliste „Aufgaben“ wurde angelegt.');
+      } catch (err) {
+        throw new Error(err.offline ? 'Dafür wird eine Verbindung zur Nextcloud gebraucht.' : err.message);
+      }
+    },
     manual: () => { ui.login.manual = true; },
     'flow-cancel': () => { App.cancelLoginFlow(); ui.login.flow = false; ui.login.busy = false; },
     logout: async () => {

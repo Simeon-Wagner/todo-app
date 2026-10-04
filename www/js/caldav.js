@@ -401,6 +401,22 @@
     return S().calendars.find((c) => c.url === wanted && ok(c)) || S().calendars.find(ok) || null;
   };
 
+  // Legt in der Nextcloud eine eigene Aufgabenliste an (noetig, wenn es noch keine gibt).
+  App.createTaskList = async function () {
+    const acc = S().account;
+    const url = acc.home + 'aufgaben-' + App.uuid().slice(0, 8) + '/';
+    const body =
+      '<c:mkcalendar xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav" xmlns:a="http://apple.com/ns/ical/"><d:set><d:prop>' +
+      '<d:displayname>Aufgaben</d:displayname><a:calendar-color>#63585E</a:calendar-color>' +
+      '<c:supported-calendar-component-set><c:comp name="VTODO"/></c:supported-calendar-component-set>' +
+      '</d:prop></d:set></c:mkcalendar>';
+    const r = await dav(acc, 'MKCALENDAR', url, { body });
+    if (r.status < 200 || r.status >= 300) throw new Error('Die Aufgabenliste konnte nicht angelegt werden (Antwort ' + r.status + ').');
+    S().settings.taskCal = url;
+    App.save();
+    App.requestSync(0);
+  };
+
   // scope: 'day' | 'week' | 'month'; due: 'JJJJ-MM-TT' oder null
   App.addTask = function ({ title, due, scope }) {
     const cal = App.defaultCal('todo');
